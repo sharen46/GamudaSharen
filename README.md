@@ -2,6 +2,10 @@
 
 An end-to-end multi-agent RAG system that ingests project documents and answers questions about project status, risks, and budgets.
 
+## Walkthrough Video
+- 3–5 minute walkthrough:
+https://www.loom.com/share/b2e35690a51d4d96b3328c50e16abad6
+
 ## Live Demo
 - Frontend: https://gamuda-sharen.vercel.app
 - Backend: https://gamudasharen-backend.onrender.com
