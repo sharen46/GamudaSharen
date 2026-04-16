@@ -1,0 +1,128 @@
+﻿Diagnose log at 2026-04-16T15:14:17Z
+
+AppPath: C:\Program Files\Git\mingw64\bin\git-credential-manager.exe
+InstallDir: C:\Program Files\Git\mingw64\bin\
+Version: 2.7.3+5fa7116896c82164996a609accd1c5ad90fe730a
+
+------------
+Diagnostic: Environment
+Skipped: False
+Success: True
+Exception: None
+Log:
+OSType: Windows
+OSVersion: 10.0 (build 26200)
+Reading environment variables... OK
+ Variables:
+OneDriveConsumer=C:\Users\share\OneDrive
+ProgramFiles(x86)=C:\Program Files (x86)
+MSYSTEM=MINGW64
+ProgramW6432=C:\Program Files
+ChocolateyInstall=C:\ProgramData\chocolatey
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 186 Stepping 2, GenuineIntel
+TMP=C:\Users\share\AppData\Local\Temp
+PROCESSOR_ARCHITECTURE=AMD64
+VSCODE_GIT_ASKPASS_MAIN=c:\Users\share\AppData\Roaming\Code\User\globalStorage\vscode.git\askpass\493597c785d4c5cb\askpass-main.js
+Path=C:/Program Files/Git/mingw64/libexec/git-core;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\share\bin;C:\Users\share\OneDrive\Desktop\GamudaSharen\venv\Scripts;c:\Users\share\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;c:\Users\share\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\copilotCli;C:\Users\share\AppData\Local\Programs\Microsoft VS Code;C:\Python314\Scripts\;C:\Python314\;C:\Program Files\Python311\Scripts\;C:\Program Files\Python311\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Users\share\.local\bin;C:\Users\share\AppData\Local\Microsoft\WindowsApps;C:\Users\share\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\share\AppData\Local\Python\bin;C:\Users\share\AppData\Roaming\npm;c:\Users\share\.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\scripts\noConfigScripts
+USERPROFILE=C:\Users\share
+VSCODE_GIT_IPC_HANDLE=\\.\pipe\vscode-git-d0c5a8be55-sock
+PROCESSOR_REVISION=ba02
+ChocolateyLastPathUpdate=134206470421802287
+FPS_BROWSER_APP_PROFILE_STRING=Internet Explorer
+FPS_BROWSER_USER_PROFILE_STRING=Default
+LOGONSERVER=\\MSI
+TEMP=C:\Users\share\AppData\Local\Temp
+PYDEVD_DISABLE_FILE_VALIDATION=1
+USERNAME=share
+SystemRoot=C:\Windows
+VSCODE_DEBUGPY_ADAPTER_ENDPOINTS=c:\Users\share\.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\.noConfigDebugAdapterEndpoints\endpoint-9d480c3530b69521.txt
+CHROME_CRASHPAD_PIPE_NAME=\\.\pipe\crashpad_1100_BYNUKXZXSYLNNBGU
+GIT_EXEC_PATH=C:/Program Files/Git/mingw64/libexec/git-core
+PLINK_PROTOCOL=ssh
+_OLD_VIRTUAL_PATH=c:\Users\share\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;c:\Users\share\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\copilotCli;C:\Users\share\AppData\Local\Programs\Microsoft VS Code;C:\Python314\Scripts\;C:\Python314\;C:\Program Files\Python311\Scripts\;C:\Program Files\Python311\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Users\share\.local\bin;C:\Users\share\AppData\Local\Microsoft\WindowsApps;C:\Users\share\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\share\AppData\Local\Python\bin;C:\Users\share\AppData\Roaming\npm;c:\Users\share\.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\scripts\noConfigScripts
+_OLD_VIRTUAL_PROMPT=$P$G
+OneDrive=C:\Users\share\OneDrive
+VSCODE_NONCE=eca0e97f-5b15-4e3c-8cd4-69547ce277d7
+CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+ZES_ENABLE_SYSMAN=1
+PYTHON_BASIC_REPL=1
+ProgramData=C:\ProgramData
+LANG=en_US.UTF-8
+EFC_11884_2775293581=1
+HOMEPATH=\Users\share
+EFC_11884_1262719628=1
+COMPUTERNAME=MSI
+PYTHONSTARTUP=c:\Users\share\AppData\Roaming\Code\User\workspaceStorage\517aa6f93337e0912d437323b77bbb56\ms-python.python\pythonrc.py
+EFC_11884_2283032206=1
+CommonProgramW6432=C:\Program Files\Common Files
+TERM=xterm-256color
+SESSIONNAME=Console
+DriverData=C:\Windows\System32\Drivers\DriverData
+HOMEDRIVE=C:
+GIT_ASKPASS=c:\Users\share\AppData\Roaming\Code\User\globalStorage\vscode.git\askpass\493597c785d4c5cb\askpass.sh
+windir=C:\Windows
+GIT_TRACE2_PARENT_SID=7a6dfca4-09a4-48fe-a207-2e0d946f2d23
+SystemDrive=C:
+NUMBER_OF_PROCESSORS=16
+OS=Windows_NT
+EFC_11884_1592913036=1
+ProgramFiles=C:\Program Files
+ComSpec=C:\Windows\system32\cmd.exe
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW
+HOME=C:\Users\share
+PSModulePath=C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+ALLUSERSPROFILE=C:\ProgramData
+PROMPT=(venv) $P$G
+TMPDIR=C:\Users\share\AppData\Local\Temp
+VIRTUAL_ENV_PROMPT=(venv) 
+APPDATA=C:\Users\share\AppData\Roaming
+USERDOMAIN=MSI
+PROCESSOR_LEVEL=6
+VIRTUAL_ENV=C:\Users\share\OneDrive\Desktop\GamudaSharen\venv
+LOCALAPPDATA=C:\Users\share\AppData\Local
+VSCODE_GIT_ASKPASS_NODE=C:\Users\share\AppData\Local\Programs\Microsoft VS Code\Code.exe
+VSCODE_GIT_ASKPASS_EXTRA_ARGS=
+BUNDLED_DEBUGPY_PATH=c:\Users\share\.vscode\extensions\ms-python.debugpy-2025.18.0-win32-x64\bundled\libs\debugpy
+TERM_PROGRAM_VERSION=1.115.0
+USERDOMAIN_ROAMINGPROFILE=MSI
+COLORTERM=truecolor
+PUBLIC=C:\Users\Public
+TERM_PROGRAM=vscode
+EFC_11884_3789132940=1
+CommonProgramFiles=C:\Program Files\Common Files
+
+
+------------
+Diagnostic: File system
+Skipped: False
+Success: True
+Exception: None
+Log:
+Temporary directory is 'C:\Users\share\AppData\Local\Temp\'...
+Checking basic file I/O...
+Writing to temporary file 'C:\Users\share\AppData\Local\Temp\b3b947e0b3cedc1bf58509b9'... OK
+Reading from temporary file 'C:\Users\share\AppData\Local\Temp\b3b947e0b3cedc1bf58509b9'... OK
+Deleting temporary file 'C:\Users\share\AppData\Local\Temp\b3b947e0b3cedc1bf58509b9'... OK
+Testing IFileSystem instance...
+UserHomePath: C:\Users\share
+UserDataDirectoryPath: C:\Users\share\.gcm
+GetCurrentDirectory(): C:\Users\share\OneDrive\Desktop\GamudaSharen
+
+------------
+Diagnostic: Networking
+Skipped: False
+Success: True
+Exception: None
+Log:
+Checking networking and HTTP stack...
+Creating HTTP client... OK
+IsNetworkAvailable: True
+Sending HEAD request to http://example.com...Sending HEAD request to https://example.com... OK
+Acquiring free TCP port... OK
+Testing local HTTP loopback connections...
+Creating new HTTP listener for http://localhost:56257/... OK
+Waiting for loopback connection... OK
+Writing response... OK
+Waiting for response data... OK
+Loopback connection data OK
+
