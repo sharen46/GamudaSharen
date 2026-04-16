@@ -1,0 +1,471 @@
+import React, { useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Upload,
+  FileText,
+  Send,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Server,
+  Sparkles,
+  RefreshCcw,
+  MessageSquare,
+} from "lucide-react";
+
+const quickPrompts = [
+  "Summarize the uploaded document",
+  "List the key risks in the report",
+  "What is the current project status?",
+  "What deadlines are mentioned?",
+];
+
+function Badge({ children, tone = "default" }) {
+  const tones = {
+    default: "bg-slate-100 text-slate-700 border-slate-200",
+    success: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    danger: "bg-rose-50 text-rose-700 border-rose-200",
+    info: "bg-blue-50 text-blue-700 border-blue-200",
+    warn: "bg-amber-50 text-amber-700 border-amber-200",
+  };
+
+  return (
+    <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${tones[tone]}`}>
+      {children}
+    </span>
+  );
+}
+
+function SectionCard({ title, subtitle, icon: Icon, right, children }) {
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="rounded-2xl bg-slate-100 p-2.5">
+            <Icon className="h-5 w-5 text-slate-700" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+            <p className="text-sm text-slate-500">{subtitle}</p>
+          </div>
+        </div>
+        {right}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function EmptyState({ title, description }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center">
+      <p className="text-sm font-medium text-slate-700">{title}</p>
+      <p className="mt-1 text-sm text-slate-500">{description}</p>
+    </div>
+  );
+}
+
+export default function ProjectIntelligenceUI() {
+  const [apiBase, setApiBase] = useState("http://127.0.0.1:8001");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState(null);
+  const [uploadError, setUploadError] = useState("");
+
+  const [query, setQuery] = useState("");
+  const [asking, setAsking] = useState(false);
+  const [chatResult, setChatResult] = useState(null);
+  const [chatError, setChatError] = useState("");
+  const [history, setHistory] = useState([]);
+
+  const fileInputRef = useRef(null);
+  const normalizedApiBase = useMemo(() => apiBase.replace(/\/$/, ""), [apiBase]);
+
+  const handleFilePick = (event) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
+    setUploadError("");
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files?.[0] || null;
+    if (file) {
+      setSelectedFile(file);
+      setUploadError("");
+    }
+  };
+
+  const uploadFile = async () => {
+    if (!selectedFile) {
+      setUploadError("Please choose a file first.");
+      return;
+    }
+
+    setUploading(true);
+    setUploadError("");
+    setUploadResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch(`${normalizedApiBase}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || "Upload failed.");
+      }
+
+      setUploadResult(data);
+    } catch (error) {
+      setUploadError(error.message || "Upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const askQuestion = async (customQuery) => {
+    const finalQuery = (customQuery ?? query).trim();
+
+    if (!finalQuery) {
+      setChatError("Please type a question first.");
+      return;
+    }
+
+    setAsking(true);
+    setChatError("");
+
+    try {
+      const response = await fetch(`${normalizedApiBase}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: finalQuery,
+          session_id: "default",
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || "Chat request failed.");
+      }
+
+      setChatResult(data);
+      setHistory((prev) => [
+        {
+          id: Date.now(),
+          query: finalQuery,
+          answer: data.answer,
+          confidence: data.confidence,
+          sources: data.sources || [],
+          agent: data.agent_used,
+        },
+        ...prev,
+      ]);
+    } catch (error) {
+      setChatError(error.message || "Chat request failed.");
+    } finally {
+      setAsking(false);
+    }
+  };
+
+  const resetAll = () => {
+    setSelectedFile(null);
+    setUploading(false);
+    setUploadResult(null);
+    setUploadError("");
+    setQuery("");
+    setAsking(false);
+    setChatResult(null);
+    setChatError("");
+    setHistory([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const confidenceTone = (value) => {
+    if (value === "high") return "success";
+    if (value === "medium") return "info";
+    if (value === "low") return "warn";
+    return "default";
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="mb-8 rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                <Sparkles className="h-3.5 w-3.5" />
+                Project Intelligence Assistant
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                Upload documents and chat with them
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                A React UI for your FastAPI backend. Upload a PDF, CSV, TXT, or DOCX file,
+                then ask questions and get AI-generated answers from indexed content.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Badge tone="info">React + JavaScript</Badge>
+              <Badge tone="success">FastAPI Ready</Badge>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="mb-6 grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <SectionCard
+              title="Backend connection"
+              subtitle="Point the UI to your running FastAPI server"
+              icon={Server}
+              right={
+                <button
+                  onClick={resetAll}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                  Reset
+                </button>
+              }
+            >
+              <label className="mb-2 block text-sm font-medium text-slate-700">API Base URL</label>
+              <input
+                value={apiBase}
+                onChange={(e) => setApiBase(e.target.value)}
+                placeholder="http://127.0.0.1:8001"
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400"
+              />
+              <p className="mt-2 text-xs text-slate-500">Example: http://127.0.0.1:8001</p>
+            </SectionCard>
+          </div>
+
+          <div>
+            <SectionCard title="Current status" subtitle="Quick overview" icon={CheckCircle2}>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span className="text-slate-500">Selected file</span>
+                  <span className="max-w-[180px] truncate font-medium text-slate-800">
+                    {selectedFile?.name || "None"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span className="text-slate-500">Upload state</span>
+                  <span className="font-medium text-slate-800">
+                    {uploading ? "Uploading..." : uploadResult ? "Uploaded" : "Waiting"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span className="text-slate-500">Chat state</span>
+                  <span className="font-medium text-slate-800">
+                    {asking ? "Thinking..." : chatResult ? "Answered" : "Idle"}
+                  </span>
+                </div>
+              </div>
+            </SectionCard>
+          </div>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SectionCard title="Upload file" subtitle="Send a document to your /upload endpoint" icon={Upload}>
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+              className="rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center"
+            >
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <FileText className="h-7 w-7 text-slate-700" />
+              </div>
+              <h3 className="text-base font-semibold text-slate-900">Drop your file here</h3>
+              <p className="mt-1 text-sm text-slate-500">Supports PDF, CSV, TXT, and DOCX</p>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                onChange={handleFilePick}
+                accept=".pdf,.csv,.txt,.docx"
+                className="hidden"
+              />
+
+              <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
+                >
+                  Choose file
+                </button>
+                <button
+                  onClick={uploadFile}
+                  disabled={uploading}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {uploading ? "Uploading" : "Upload now"}
+                </button>
+              </div>
+
+              {selectedFile && (
+                <div className="mt-5 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left">
+                  <p className="text-sm font-medium text-slate-900">{selectedFile.name}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {(selectedFile.size / 1024).toFixed(1)} KB
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {uploadError && (
+              <div className="mt-4 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                <AlertCircle className="mt-0.5 h-4 w-4" />
+                <span>{uploadError}</span>
+              </div>
+            )}
+
+            {uploadResult && (
+              <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                <div className="mb-3 flex items-center gap-2 text-emerald-700">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span className="text-sm font-medium">Upload successful</span>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-white p-3">
+                    <p className="text-xs text-slate-500">Filename</p>
+                    <p className="mt-1 truncate text-sm font-medium text-slate-900">{uploadResult.filename}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-3">
+                    <p className="text-xs text-slate-500">Chunks stored</p>
+                    <p className="mt-1 text-sm font-medium text-slate-900">{uploadResult.chunks_stored}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-3">
+                    <p className="text-xs text-slate-500">Document ID</p>
+                    <p className="mt-1 truncate text-sm font-medium text-slate-900">{uploadResult.doc_id}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Chat with document" subtitle="Send questions to your /chat endpoint" icon={MessageSquare}>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">Your question</label>
+                <textarea
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  rows={5}
+                  placeholder="Ask something about the uploaded document..."
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-slate-400"
+                />
+              </div>
+
+              <div>
+                <p className="mb-2 text-sm font-medium text-slate-700">Quick prompts</p>
+                <div className="flex flex-wrap gap-2">
+                  {quickPrompts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      onClick={() => {
+                        setQuery(prompt);
+                        askQuestion(prompt);
+                      }}
+                      className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => askQuestion()}
+                disabled={asking}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {asking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {asking ? "Generating answer" : "Send question"}
+              </button>
+
+              {chatError && (
+                <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                  <AlertCircle className="mt-0.5 h-4 w-4" />
+                  <span>{chatError}</span>
+                </div>
+              )}
+
+              {chatResult ? (
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <Badge tone={confidenceTone(chatResult.confidence)}>
+                      Confidence: {chatResult.confidence || "unknown"}
+                    </Badge>
+                    <Badge>{chatResult.agent_used || "agent"}</Badge>
+                  </div>
+
+                  <div className="rounded-2xl bg-white p-4">
+                    <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                      {chatResult.answer}
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="mb-2 text-sm font-medium text-slate-700">Sources</p>
+                    {chatResult.sources?.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {chatResult.sources.map((source) => (
+                          <Badge key={source}>{source}</Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyState title="No sources returned" description="The backend did not return any source references." />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <EmptyState title="No answer yet" description="Upload a file and ask your first question." />
+              )}
+            </div>
+          </SectionCard>
+        </div>
+
+        <div className="mt-6">
+          <SectionCard title="Recent chat history" subtitle="Latest prompts and answers in this session" icon={MessageSquare}>
+            {history.length === 0 ? (
+              <EmptyState title="No messages yet" description="Your question history will appear here after you start chatting." />
+            ) : (
+              <div className="space-y-4">
+                {history.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
+                  >
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <Badge tone={confidenceTone(item.confidence)}>{item.confidence}</Badge>
+                      <Badge>{item.agent}</Badge>
+                    </div>
+                    <p className="text-sm font-semibold text-slate-900">{item.query}</p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.answer}</p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </SectionCard>
+        </div>
+      </div>
+    </div>
+  );
+}
