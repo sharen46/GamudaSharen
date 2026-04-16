@@ -46,7 +46,8 @@ export default function ProjectIntelligenceUI() {
   const [chatHistory, setChatHistory] = useState([]);
 
   const fileInputRef = useRef(null);
-  const apiBase = "http://127.0.0.1:8001";
+ const apiBase =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001";
 
   const handleFilePick = (event) => {
     const file = event.target.files?.[0] || null;
